@@ -8,7 +8,7 @@ def client(host = 'localhost', port=8082):
     server_address = (host, port)
     print ("Conectado em %s port %s" % server_address)
     sock.connect(server_address)
-    # Send data
+
     chave = gerarChave("minha chave secreta")
     try:
         while True:

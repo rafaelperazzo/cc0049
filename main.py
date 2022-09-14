@@ -2,7 +2,7 @@ from criptografia import *
 import socket
 import threading
 
-def comunicacao(client,chave,address):
+def comunicacao(client,chave):
     while True:
         encriptado = client.recv(2048)
         data = decriptar(encriptado.decode(),chave)
@@ -14,7 +14,6 @@ def comunicacao(client,chave,address):
             client.send(encriptado.encode())
 
 def server(host = 'localhost', port=8082):
-    data_payload = 2048 #The maximum amount of data to be received at once
     # Create a TCP socket
     sock = socket.socket(socket.AF_INET,  socket.SOCK_STREAM)
     # Enable reuse address/port
@@ -29,7 +28,7 @@ def server(host = 'localhost', port=8082):
     while True:
         print ("Esperando mensagem do cliente")
         client, address = sock.accept()
-        x = threading.Thread(target=comunicacao, args=(client,chave,address,))
+        x = threading.Thread(target=comunicacao, args=(client,chave,))
         x.start()
 
 server()
