@@ -1,13 +1,17 @@
 from criptografia import *
 import socket
-'''
-chave = gerarChave("senha")
-texto = "texto secreto af jaskldjaslalkjdakdjas ajdlsalsaj jaldjas asldjsajdk"
-encriptado = encriptar(texto,chave)
-print(encriptado)
-decriptado = decriptar(encriptado,chave)
-print(decriptado)
-'''
+import threading
+
+def comunicacao(client,chave,address):
+    while True:
+        encriptado = client.recv(2048)
+        data = decriptar(encriptado.decode(),chave)
+        if data=="0":
+            exit(0)
+        if data:
+            print ("Dados: %s" %data)
+            encriptado = encriptar(data,chave)
+            client.send(encriptado.encode())
 
 def server(host = 'localhost', port=8082):
     data_payload = 2048 #The maximum amount of data to be received at once
@@ -25,17 +29,7 @@ def server(host = 'localhost', port=8082):
     while True:
         print ("Esperando mensagem do cliente")
         client, address = sock.accept()
-        encriptado = client.recv(data_payload)
-        '''
-        o que fazer com a mensagem recebida ?
-        '''
-        data = decriptar(encriptado.decode(),chave)
-        if data:
-            print ("Dados: %s" %data)
-            encriptado = encriptar(data,chave)
-            client.send(encriptado.encode())
-            print ("Enviando de volta %s para %s" % (data, address))
-            # end connection
-            client.close()
+        x = threading.Thread(target=comunicacao, args=(client,chave,address,))
+        x.start()
 
 server()

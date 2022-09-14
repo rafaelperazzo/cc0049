@@ -9,17 +9,18 @@ def client(host = 'localhost', port=8082):
     print ("Conectado em %s port %s" % server_address)
     sock.connect(server_address)
     # Send data
+    chave = gerarChave("minha chave secreta")
     try:
-        # Send data
-        message = input("Digite a mensagem a ser enviada: ")
-        print ("Enviando %s" % message)
-        chave = gerarChave("minha chave secreta")
-        encriptado = encriptar(message,chave)
-        sock.sendall(encriptado.encode('utf-8'))
-        # Look for the response
-        data = sock.recv(2048)
-        decriptado = decriptar(data.decode(),chave)
-        print ("Recebido: %s" % decriptado)
+        while True:
+            # Send data
+            message = input("Digite a mensagem a ser enviada: ")
+            print ("Enviando %s" % message)
+            encriptado = encriptar(message,chave)
+            sock.sendall(encriptado.encode('utf-8'))
+            # Look for the response
+            data = sock.recv(2048)
+            decriptado = decriptar(data.decode(),chave)
+            print ("Recebido: %s" % decriptado)
     except socket.error as e:
         print ("Socket error: %s" %str(e))
     except Exception as e:
@@ -27,5 +28,6 @@ def client(host = 'localhost', port=8082):
     finally:
         print ("Encerrando conexão com o servidor")
         sock.close()
-
+host = input("Digite o IP: ")
+porta = input ("Digite a porta: ")
 client()
