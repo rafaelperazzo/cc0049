@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+   apache:
+     image: https:latest
+     build: .
+     volumes:
+       - ./server.crt:/usr/local/apache2/conf/server.crt
+       - ./server.key:/usr/local/apache2/conf/server.key
+     restart: "no"
+     ports: 
+       - "4433:443"
+
