@@ -1,3 +1,11 @@
+'''
+Iniciar host origem
+python3 host.py --chave="64Q9VP649" --id="A" --porta1=30000 --porta2=20001 --ip="10.0.36.13" --destino="10.0.84.179" --porta-destino=20001 --id-destino="B" --cdc="10.0.36.13"
+
+Iniciar host destino
+python3 host.py --chave="64Q9VP649" --id="A" --porta1=30000 --porta2=20001 --ip="10.0.36.13" --cdc="10.0.36.13"
+
+'''
 import socket
 import threading
 from random import seed
@@ -115,21 +123,42 @@ class Host:
         te.start()
 
 argumentList = sys.argv[1:]
-options = "k:i:p:"
-long_options = ["chave=","id=","porta1=","porta2=","ip=","tipo="]
+options = "k:i:c:p:a:d:y:t:z:"
+long_options = ["chave=","id=","porta1=","porta2=","ip=","destino=","porta-destino=","id-destino=","cdc="]
 try:
     arguments, values = getopt.getopt(argumentList, options, long_options)
-    print(arguments)
-    if len(arguments)!=6:
-        print("Quantidade de argumentos incorreta!! (--chave --id --porta1 --porta2 --ip --tipo)")
     for currentArgument, currentValue in arguments:
         if currentArgument in ("-k","--chave"):
             chave = currentValue
+        if currentArgument in ("-i","--id"):
+            id_host = currentValue
+        if currentArgument in ("-c","--porta1"):
+            porta_cdc = int(currentValue)
+        if currentArgument in ("-p","--porta2"):
+            porta_local = int(currentValue)
+        if currentArgument in ("-a","--ip"):
+            ip = currentValue
+        if currentArgument in ("-d","--destino"):
+            destino = currentValue
+        if currentArgument in ("-y","--porta-destino"):
+            porta_destino = int(currentValue)
+        if currentArgument in ("-t","--id-destino"):
+            id_destino = currentValue
+        if currentArgument in ("-z","--cdc"):
+            ip_cdc = currentValue
 except getopt.error as e:
     print(str(e))
     exit()
 
-a = Host("64Q9VP649","A",30000,20001,"10.0.36.13")
-a.iniciar_comunicacao("B","10.0.36.13","10.0.84.179",20001)
-#b = Host("A49MVNW39","B",30000,20001,"10.0.84.179")
-#b.iniciar_escuta()
+if ('destino' in vars()) and ('porta_destino' in vars()) and ('id_destino' in vars()) and ('ip_cdc' in vars()):
+    print('iniciando host origem')
+    a = Host(chave, id_host, porta_cdc, porta_local, ip)
+    print(chave, id_host, porta_cdc, porta_local, ip)
+    print(id_destino, ip_cdc, destino, porta_destino)
+    a.iniciar_comunicacao(id_destino, ip_cdc, destino, porta_destino)
+elif ('chave' in vars()) and ('id_host' in vars()) and ('porta_cdc' in vars()) and ('porta_local' in vars()) and ('ip' in vars()):
+    print('iniciando host destino')
+    print(chave, id_host, porta_cdc, porta_local, ip)
+    b = Host(chave, id_host, porta_cdc, porta_local, ip)
+    b.iniciar_escuta()
+
